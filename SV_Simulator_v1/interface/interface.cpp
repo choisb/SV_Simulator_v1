@@ -32,6 +32,11 @@ void SV_Run()
 void SV_WriteJson()
 {
 	SV_DebugLog("SV_WriteJson", FuncType);
+
+	if (game == nullptr) {
+		SV_ErrorLog("SV_WriteJson(): nullptr에 접근시도를 합니다.");
+		return;
+	}
 	root["Date"] = game->Today();
 	jsonDocument = Json::writeString(wbuilder, root);
 }
@@ -90,8 +95,11 @@ void SV_Interface_PlayGame()
 
 
 	thread_exit = false;
+
+	//Thread 생성 및 detach********************
 	std::thread Simulator(SV_Run);
 	Simulator.detach();
+	//****************************************
 }
 LPCTSTR SV_Interface_GetData()
 {
@@ -116,22 +124,35 @@ LPCTSTR SV_Interface_EnforcePolicy()
 }
 
 
-
 void SV_Interface_EndGame()
 {
 	SV_DebugLog("SV_Interface_EndGame()", FuncType);
 
 	thread_exit = true;
-	thread_run = false;
 	isInit = false;
 	lDebugMode = false;
 	fDebugMode = false;
 
 	//**************************
 	//game 해제
+	// thread가 작동중이면 0.1ms씩 5회 대기
 
-	delete game;
-	game = nullptr;
+	for (int i = 0; i < 5; i++) {
+
+		if (thread_run)
+			Sleep(100);
+		else {
+			if (game == nullptr) {
+				SV_ErrorLog("SV_Interface_EndGame(): nullptr을 해제하려는 시도를 합니다.");
+				return;
+			}
+			delete game;
+			game = nullptr;
+			return;
+		}
+	}
+
+	SV_ErrorLog("SV_Interface_EndGame(): Thread가 종료되지 않아서 game포인터를 해제할 수 없습니다.");
 
 	//**************************
 
@@ -148,5 +169,9 @@ void SV_DebugLog(const char* _str, int _type)
 
 void SV_ErrorLog(const char* _str)
 {
+	cout << "***************************************************************" << endl;
+	cout << "예기치 못한 상황입니다. 담당자에게 보고해주세요." << endl;
 	cout << "SV_ERO: "<<_str << endl;
+	cout << "***************************************************************" << endl;
+
 }
