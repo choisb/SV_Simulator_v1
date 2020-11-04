@@ -28,7 +28,7 @@ extern "C" SV_SIMULAYOR_API void SV_Interface_PlayGame();
 /// <returns></returns>
 extern "C" SV_SIMULAYOR_API void SV_Interface_EndGame();
 extern "C" SV_SIMULAYOR_API LPCTSTR SV_Interface_GetData();
-extern "C" SV_SIMULAYOR_API LPCTSTR SV_Interface_EnforcePolicy();
+extern "C" SV_SIMULAYOR_API LPCTSTR SV_Interface_EnforcePolicy(int _countryCode, int _policyCode);
 //***************************************************************************************
 
 
@@ -79,5 +79,5 @@ Json::StreamWriterBuilder wbuilder;
 // game 포인터 선언
 Game* game = nullptr;
 
-// oneDay의 주기 ms 단위
+// oneDay의 호출 주기 ms 단위, MINCYCLE 이상의 값만 입력됨.
 unsigned int oneDayCycle;

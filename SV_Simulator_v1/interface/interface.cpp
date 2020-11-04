@@ -64,15 +64,17 @@ void SV_Interface_InitGame(unsigned int _cycle, int _debugMode)
 	case 2:
 		fDebugMode = true;
 		lDebugMode = true;
+		break;
 
 	case 1:
 		fDebugMode = false;
 		lDebugMode = true;
+		break;
 
 	default:
 		fDebugMode = false;
 		lDebugMode = false;
-
+		break;
 	}
 
 	
@@ -111,7 +113,7 @@ LPCTSTR SV_Interface_GetData()
 }
 
 
-LPCTSTR SV_Interface_EnforcePolicy()
+LPCTSTR SV_Interface_EnforcePolicy(int _countryCode, int _policyCode)
 {
 	SV_DebugLog("SV_Interface_GetData()", FuncType);
 
@@ -119,6 +121,8 @@ LPCTSTR SV_Interface_EnforcePolicy()
 		return nullptr;
 	if (!thread_run)
 		return nullptr;
+
+	game->EnforcePolicy(_countryCode, _policyCode);
 
 	return SV_Interface_GetData();
 }
@@ -135,9 +139,9 @@ void SV_Interface_EndGame()
 
 	//**************************
 	//game 해제
-	// thread가 작동중이면 0.1ms씩 5회 대기
+	// thread가 작동중이면 0.1ms씩 30회 대기. 최대 3초 대기
 
-	for (int i = 0; i < 5; i++) {
+	for (int i = 0; i < 30; i++) {
 
 		if (thread_run)
 			Sleep(100);
@@ -146,6 +150,7 @@ void SV_Interface_EndGame()
 				SV_ErrorLog("SV_Interface_EndGame(): nullptr을 해제하려는 시도를 합니다.");
 				return;
 			}
+			cout <<(i * 100) << "ms 대기 후 종료 되었습니다." << endl;
 			delete game;
 			game = nullptr;
 			return;
@@ -160,7 +165,7 @@ void SV_Interface_EndGame()
 
 void SV_DebugLog(const char* _str, int _type)
 {
-	if (_type == FuncType && !fDebugMode)
+	if (_type == FuncType && fDebugMode)
 		cout << "SV_LOG: " << _str << endl;
 
 	else if (_type == LogType && lDebugMode)

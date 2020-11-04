@@ -155,7 +155,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="inGame\CountryCode.h" />
     <ClInclude Include="inGame\Game.h" />
+    <ClInclude Include="inGame\IndustryPolicyCode.h" />
     <ClInclude Include="interface\framework.h" />
     <ClInclude Include="interface\interface.h" />
     <ClInclude Include="interface\pch.h" />

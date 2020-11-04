@@ -1,4 +1,8 @@
 #pragma once
+#include "CountryCode.h"
+#include "IndustryPolicyCode.h"
+#include <iostream>
+
 
 class Game {
 private:
@@ -22,6 +26,14 @@ public:
 	/// 1일 단위로 호출되는 함수
 	/// </summary>
 	void Oneday();
+
+	/// <summary>
+	/// 정책시 실행될경우 호출되는 이벤트 함수
+	/// </summary>
+	/// <param name="_countryCode"> 정책을 실행한 국가 코드</param>
+	/// <param name="_policyCode"> 실행하려는 정책 코드</param>
+	void EnforcePolicy(int _countryCode, int _policyCode);
+
 	int Today() { return date; };
 
 	~Game();
